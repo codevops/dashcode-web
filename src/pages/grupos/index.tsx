@@ -4,8 +4,44 @@ import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Text, Th,
 import { RiAddLine, RiPencilLine } from "react-icons/ri"
 import { Pagination } from "@/components/Pagination"
 import Link from "next/link"
+import { GetServerSideProps } from "next"
+import { FormEvent, useState } from "react"
 
-export default function GroupList() {
+type Group = {
+  id: string;
+  description: string;
+}
+
+type GroupProps = {
+  groups: Group[];
+}
+
+export default function GroupList({ groups }: GroupProps) {
+  const [newGroups, setNewGroups] = useState('');
+
+  async function handleCreateGroup(event: FormEvent) {
+    event.preventDefault();
+
+    await fetch('http://localhost:3333/group/create', {
+      method: 'POST',
+      body: JSON.stringify({ description }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
+  async function handleDeleteGroup(id: string) {
+
+    await fetch(`http://localhost:3333/group/${id}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ id }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
   return (
     <Box>
       <Header />
@@ -35,43 +71,65 @@ export default function GroupList() {
                 <Th px="6" color="gray.300" width="8">
                   <Checkbox colorScheme="green" />
                 </Th>
-                <Th width="8">Código</Th>
                 <Th>Descrição</Th>
+                <Th width="8"></Th>
                 <Th width="8"></Th>
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td px="6">
-                  <Checkbox colorScheme="green" />
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">1</Text>
-                  </Box>
-                </Td>
-                <Td>
-                  <Box>
-                    <Text fontWeight="bold">Carne Bovina</Text>
-                  </Box>
-                </Td>
-                <Td>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    color="gray.500"
-                    leftIcon={<Icon as={RiPencilLine} />}
-                  >
-                    Editar
-                  </Button>
-                </Td>
-              </Tr>
+              {groups.map(group => (
+                <Tr key={group.id}>
+                  <Td px="6">
+                    <Checkbox colorScheme="green" />
+                  </Td>
+                  <Td>
+                    {group.description}
+                  </Td>
+                  <Td>
+                    <Button
+                      as="a"
+                      size="sm"
+                      fontSize="sm"
+                      color="gray.500"
+                      leftIcon={<Icon as={RiPencilLine} />}
+                    >
+                      Editar
+                    </Button>
+                  </Td>
+                  <Td>
+                    <Button
+                      as="a"
+                      size="sm"
+                      fontSize="sm"
+                      color="white"
+                      bgColor="red.400"
+                      leftIcon={<Icon as={RiPencilLine} />}
+                      onClick={() => handleDeleteGroup(group.id)}
+                    >
+                      Excluir
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
           <Pagination />
         </Box>
-      </Flex>
-    </Box>
+      </Flex >
+    </Box >
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const result = await fetch('http://localhost:3333/group');
+
+  let groups: Group[] = await result.json();
+
+  console.log(groups);
+
+  return {
+    props: {
+      groups,
+    }
+  }
 }
