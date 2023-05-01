@@ -26,47 +26,6 @@ type Product = {
   preco_sugerido: number
 }
 
-const defaultData: Product[] = [
-  {
-    codigo: 1,
-    descricao: 'Alcatra kg',
-    quantidade: 7.500,
-    preco: 20.49,
-    total_venda: 400.00,
-    perc_total_Preço: 30,
-    total_custo: 3000.00,
-    custo_kilo: 15.50,
-    lucro_sobre_custo: 19,
-    lucro_sobre_venda: 15,
-    preco_sugerido: 39.90
-  },
-  {
-    codigo: 2,
-    descricao: 'Coxao Mole Bovino KG',
-    quantidade: '7.500',
-    preco: '20.49',
-    total_venda: '400.00',
-    perc_total_Preço: '30%',
-    total_custo: 3000.00,
-    custo_kilo: 15.50,
-    lucro_sobre_custo: '19%',
-    lucro_sobre_venda: '15',
-    preco_sugerido: '39.90'
-  },
-  {
-    codigo: 3,
-    descricao: 'Picanha Bovina KG',
-    quantidade: '7.500',
-    preco: '20.49',
-    total_venda: '400.00',
-    perc_total_Preço: '30%',
-    total_custo: 3000.00,
-    custo_kilo: 15.50,
-    lucro_sobre_custo: '19%',
-    lucro_sobre_venda: '15',
-    preco_sugerido: '39.90'
-  },
-]
 
 const columnHelper = createColumnHelper<Product>()
 
