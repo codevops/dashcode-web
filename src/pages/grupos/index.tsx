@@ -1,6 +1,6 @@
 import { Sidebar } from "@/components/Sidebar"
 import { Header } from "@/components/Header"
-import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
+import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Text, Th, Thead, Tr,TableCaption, TableContainer  } from "@chakra-ui/react"
 import { RiAddLine, RiDeleteBack2Line, RiDeleteBin2Line, RiPencilLine } from "react-icons/ri"
 import { Pagination } from "@/components/Pagination"
 import Link from "next/link"
@@ -17,8 +17,19 @@ type GroupProps = {
 }
 
 export default function GroupList({ groups }: GroupProps) {
-  const [newGroups, setNewGroups] = useState('');
+  const [newGroups, setNewGroups] = useState<Group[]>(groups);
 
+  async function handleDeleteGroup(group: Group) {
+    await fetch(`http://localhost:3333/group/${group.id}`, {
+      method: 'DELETE',
+    });
+  
+    const result = await fetch('http://localhost:3333/group');
+    const groups = await result.json();
+  
+    setNewGroups(groups);
+  }
+  
   return (
     <Box>
       <Header />
@@ -42,59 +53,75 @@ export default function GroupList({ groups }: GroupProps) {
             </Link>
           </Flex>
 
-          <Table colorScheme="whiteAlpha">
-            <Thead>
-              <Tr>
-                <Th px="6" color="gray.300" width="8">
-                  <Checkbox colorScheme="green" />
-                </Th>
-                <Th>Descrição</Th>
-                <Th width="8"></Th>
-                <Th width="8"></Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {groups.map(group => (
-                <Tr key={group.id}>
-                  <Td px="6">
-                    <Checkbox colorScheme="green" />
-                  </Td>
-                  <Td>
-                    {group.description}
-                  </Td>
-                  <Td>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      color="white"
-                      bgColor="red.400"
-                      leftIcon={<Icon as={RiDeleteBin2Line} />}
-                    >
-                      Excluir
-                    </Button>
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-          <Pagination />
-        </Box>
-      </Flex >
-    </Box >
-  )
-}
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  const result = await fetch('http://localhost:3333/group');
-
-  let groups: Group[] = await result.json();
-
-  console.log(groups);
-
-  return {
-    props: {
-      groups,
+          <TableContainer>
+              <Table colorScheme="whiteAlpha">
+                <Thead>
+                  <Tr>
+                    <Th px="6" color="gray.300" width="8">
+                      <Checkbox colorScheme="green" />
+                    </Th>
+                    <Th>Descrição</Th>
+                    <Th width="8"></Th>
+                    <Th width="8"></Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                {newGroups.map(group => (
+                  <Tr key={group.id}>
+                    <Td px="6">
+                      <Checkbox colorScheme="green" />
+                    </Td>
+                    <Td>
+                      {group.description}
+                    </Td>
+                    <Td>
+                      <Button
+                        as="a"
+                        size="sm"
+                        fontSize="sm"
+                        color="white"
+                        bgColor="red.400"
+                        leftIcon={<Icon as={RiDeleteBin2Line} />}
+                        onClick={() =>                  handleDeleteGroup(group)
+                        }
+                      >
+                        Excluir
+                      </Button>
+                      </Td>
+                      <Td>
+                        <Link href={`/grupos/editar/${group.id}`} passHref>
+                          <Button
+                            as="a"
+                            size="sm"
+                            fontSize="sm"
+                            colorScheme="purple"
+                            leftIcon={<Icon as={RiPencilLine} />}
+                          >
+                            Editar
+                          </Button>
+                        </Link>
+                      </Td>
+                    </Tr>
+                  ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+      
+            <Pagination />
+          </Box>
+        </Flex>
+      </Box>
+      
+      )
+    }
+    
+    export const getServerSideProps: GetServerSideProps = async () => {
+    const response = await fetch('http://localhost:3333/group');
+    const groups = await response.json();
+    
+    return {
+      props: {
+        groups,
+      }
     }
   }
-}
