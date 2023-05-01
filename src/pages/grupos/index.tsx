@@ -1,7 +1,7 @@
 import { Sidebar } from "@/components/Sidebar"
 import { Header } from "@/components/Header"
 import { Box, Button, Checkbox, Flex, Heading, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react"
-import { RiAddLine, RiPencilLine } from "react-icons/ri"
+import { RiAddLine, RiDeleteBack2Line, RiDeleteBin2Line, RiPencilLine } from "react-icons/ri"
 import { Pagination } from "@/components/Pagination"
 import Link from "next/link"
 import { GetServerSideProps } from "next"
@@ -18,29 +18,6 @@ type GroupProps = {
 
 export default function GroupList({ groups }: GroupProps) {
   const [newGroups, setNewGroups] = useState('');
-
-  async function handleCreateGroup(event: FormEvent) {
-    event.preventDefault();
-
-    await fetch('http://localhost:3333/group/create', {
-      method: 'POST',
-      body: JSON.stringify({ description }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  }
-
-  async function handleDeleteGroup(id: string) {
-
-    await fetch(`http://localhost:3333/group/${id}`, {
-      method: 'DELETE',
-      body: JSON.stringify({ id }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  }
 
   return (
     <Box>
@@ -90,21 +67,9 @@ export default function GroupList({ groups }: GroupProps) {
                       as="a"
                       size="sm"
                       fontSize="sm"
-                      color="gray.500"
-                      leftIcon={<Icon as={RiPencilLine} />}
-                    >
-                      Editar
-                    </Button>
-                  </Td>
-                  <Td>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
                       color="white"
                       bgColor="red.400"
-                      leftIcon={<Icon as={RiPencilLine} />}
-                      onClick={() => handleDeleteGroup(group.id)}
+                      leftIcon={<Icon as={RiDeleteBin2Line} />}
                     >
                       Excluir
                     </Button>

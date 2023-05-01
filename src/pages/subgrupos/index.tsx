@@ -18,7 +18,6 @@ export default function SubGroupList() {
             <Heading size="md" fontWeight="normal">SubGrupos</Heading>
             <Link href="/subgrupos/create">
               <Button
-                as="a"
                 size="sm"
                 fontSize="sm"
                 colorScheme="green"
@@ -63,7 +62,6 @@ export default function SubGroupList() {
                 </Td>
                 <Td>
                   <Button
-                    as="a"
                     size="sm"
                     fontSize="sm"
                     color="gray.500"

@@ -14,7 +14,6 @@ export function SidebarNav() {
         <NavLink icon={RiProductHuntLine} href="/produtos">Produtos</NavLink>
       </NavSection>
       <NavSection title="MOVIMENTAÇÃO">
-        <NavLink icon={RiDashboardLine} href="/associacao">Associação</NavLink>
         <NavLink icon={RiGroupFill} href="/fracionamento">Fracionamento</NavLink>
       </NavSection>
       <NavSection title="RELATÓRIOS">

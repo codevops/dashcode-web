@@ -1,11 +1,28 @@
+import React, { FormEvent } from "react"
 import { Sidebar } from "@/components/Sidebar"
 import { Header } from "@/components/Header"
-import { Box, Button, Checkbox, Divider, Flex, HStack, Heading, Icon, SimpleGrid, Table, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react"
-import { RiAddLine, RiDeleteBack2Line, RiPencilLine, RiSave2Line } from "react-icons/ri"
-import { Pagination } from "@/components/Pagination"
+import { Box, Button, Divider, Flex, FormControl, FormErrorMessage, FormHelperText, FormLabel, HStack, Heading, Icon, SimpleGrid, Stack, Table, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react"
 import { Input } from "@/components/Form/Input"
+import api from "@/services/api"
 
 export default function CreateGroup() {
+  const [description, setDescription] = React.useState("");
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+
+    const data = {
+      description,
+    };
+
+    console.log(data);
+
+    await api.post("/group", data);
+
+    setDescription("");
+
+  }
+
   return (
     <Box>
       <Header />
@@ -18,25 +35,27 @@ export default function CreateGroup() {
 
           <Divider my="6" borderColor="gray.700" />
 
-          <VStack spacing="8">
-            <SimpleGrid minChildWidth="240px" spacing="8" w="100%">
-              <Input name="descricao" type="text" label="Descrição" />
-            </SimpleGrid>
-          </VStack>
-
-          <Flex mt="8" justify="flex-end">
-            <HStack spacing="4">
-              <Button colorScheme="whiteAlpha" width="100px" leftIcon={<Icon as={RiDeleteBack2Line} />}
-              >
-                Cancelar
-              </Button>
-              <Button colorScheme="teal" width="100px" leftIcon={<Icon as={RiSave2Line} />}
-              >
-                Salvar
-              </Button>
-            </HStack>
-          </Flex>
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={2}>
+              <Input
+                placeholder="Digite a descrição do grupo"
+                name="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                type="text"
+                label="Descrição"
+              />
+            </Stack>
+            <Button alignContent="right"
+              mt={2}
+              colorScheme="green"
+              type="submit"
+            >
+              Salvar
+            </Button>
+          </form>
         </Box>
+
       </Flex >
     </Box >
   )

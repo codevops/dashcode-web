@@ -48,7 +48,6 @@ export default function Dashboard() {
             p="8"
             bg="gray.800"
             borderRadius={8}
-          // pb="4"
           >
             <Text fontSize="lg" mb="4">Quantidade por Grupos</Text>
             <Chart options={options} series={series} type="bar" height={160} />
@@ -57,7 +56,6 @@ export default function Dashboard() {
             p="8"
             bg="gray.800"
             borderRadius={8}
-          // pb="4"
           >
             <Text fontSize="lg" mb="4">Lucratividade da Semana</Text>
             <Chart options={options} series={series} type="bar" height={160} />
