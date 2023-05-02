@@ -82,14 +82,14 @@ export default function GroupList({ groups }: GroupProps) {
                         color="white"
                         bgColor="red.400"
                         leftIcon={<Icon as={RiDeleteBin2Line} />}
-                        onClick={() =>                  handleDeleteGroup(group)
+                        onClick={() => handleDeleteGroup(group)
                         }
                       >
                         Excluir
                       </Button>
                       </Td>
                       <Td>
-                        <Link href={`/grupos/editar/${group.id}`} passHref>
+                        <Link href={`/grupos/edit/${group.id}`} passHref>
                           <Button
                             as="a"
                             size="sm"
