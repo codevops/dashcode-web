@@ -39,7 +39,7 @@ export default function Home() {
       justify="center"
       flexDirection="column"
     >
-      <Box align="center">
+      <Box alignContent="center">
         <Logo />
       </Box>
       <Flex
