@@ -42,21 +42,21 @@ export default function CreateGroup() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     try {
       const response = await axios.post("http://localhost:3333/group", {
         description,
       });
-  
+
       console.log("Registro criado com sucesso:", response.data);
+      window.alert("Grupo cadastrado com sucesso!"); // exibir mensagem de sucesso
       router.push("/grupos");
-      alert("Cadastro realizado com sucesso!"); 
     } catch (error) {
       console.error("Erro ao criar registro:", error);
-      alert("Erro ao inserir Grupo!"); 
+      // Mostrar uma mensagem de erro para o usuário
     }
   };
-  
+
   return (
     <Box>
       <Header />
@@ -106,6 +106,14 @@ export default function CreateGroup() {
           </VStack>
         </Box>
       </Flex>
+
+      <style>
+        {`
+          .alert-button {
+            display: none;
+          }
+        `}
+      </style>
     </Box>
   );
 }

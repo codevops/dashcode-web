@@ -24,6 +24,15 @@ type SubGroup = {
   id: number;
   groupid: number;
   description: string;
+};
+
+async function handleDeleteSubgroup(id: number) {
+  await fetch(`http://localhost:3333/subgroup/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 }
 
 export default function SubGroupList() {
@@ -69,10 +78,11 @@ export default function SubGroupList() {
                 <Th px="6" color="gray.300" width="8">
                   <Checkbox colorScheme="green" />
                 </Th>
-                <Th width="8">Código</Th>
+                
                 <Th>Grupo</Th>
                 <Th>Descrição</Th>
                 <Th width="8"></Th>
+                <Th></Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -81,11 +91,7 @@ export default function SubGroupList() {
                   <Td px="6">
                     <Checkbox colorScheme="green" />
                   </Td>
-                  <Td>
-                    <Box>
-                      <Text fontWeight="bold">{subGroup.id}</Text>
-                    </Box>
-                  </Td>
+                  
                   <Td>
                     <Box>
                       <Text fontWeight="bold">{subGroup.group.description}</Text>
@@ -104,6 +110,19 @@ export default function SubGroupList() {
                       leftIcon={<Icon as={RiPencilLine} />}
                     >
                       Editar
+                    </Button>
+                  </Td>
+                  <Td>
+                    <Button
+                      as="a"
+                      size="sm"
+                      fontSize="sm"
+                      color="white"
+                      bgColor="red.400"
+                      leftIcon={<Icon as={RiPencilLine} />}
+                      onClick={() => handleDeleteSubgroup(subGroup.id)}
+                    >
+                      Excluir
                     </Button>
                   </Td>
                 </Tr>
