@@ -48,7 +48,7 @@ export default function GroupList({ groups }: GroupListProps) {
         console.log('Group removido com sucesso');
         setSuccessMessage('Group removido com sucesso!');
         setTimeout(() => setSuccessMessage(''), 3000); // Limpa a mensagem após 3 segundos
-        router.push('/groups');
+        router.push('/grupos');
       } else {
         console.error('Failed to delete Group');
       }

@@ -1,30 +1,29 @@
-import { Sidebar } from "@/components/Sidebar"
-import { Header } from "@/components/Header"
-import { Box, Button, Checkbox, Divider, Flex, FormControl, Grid, GridItem, HStack, Heading, Icon, Select, SimpleGrid, Table, TableCaption, TableContainer, Tbody, Td, Text, Tfoot, Th, Thead, Tr, VStack } from "@chakra-ui/react"
-import { RiAddLine, RiDeleteBack2Line, RiPencilLine, RiSave2Line } from "react-icons/ri"
-import { Pagination } from "@/components/Pagination"
-import { Input } from "@/components/Form/Input"
-import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { useState } from "react"
+import { Sidebar } from "@/components/Sidebar";
+import { Header } from "@/components/Header";
+import { Box, Button, Divider, Flex, FormControl, Grid, GridItem, HStack, Heading, Icon, Select, SimpleGrid, Table, TableCaption, TableContainer, Tbody, Td, Text, Tfoot, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import { RiAddLine, RiDeleteBack2Line, RiPencilLine, RiSave2Line } from "react-icons/ri";
+import { Pagination } from "@/components/Pagination";
+import { Input } from "@/components/Form/Input";
+import { useState, useEffect } from "react";
+
+type SubGroup = {
+  id: string;
+  description: string;
+};
 
 type Product = {
-  codigo: number
-  descricao: string
-  quantidade: number
-  preco: number
-  total_venda: number
-  perc_total_Preço: number
-  total_custo: number
-  custo_kilo: number
-  lucro_sobre_custo: number
-  lucro_sobre_venda: number
-  preco_sugerido: number
-}
+  codigo: number;
+  descricao: string;
+  quantidade: number;
+  preco: number;
+  total_venda: number;
+  perc_total_preco: number;
+  total_custo: number;
+  custo_kilo: number;
+  lucro_sobre_custo: number;
+  lucro_sobre_venda: number;
+  preco_sugerido: number;
+};
 
 const defaultData: Product[] = [
   {
@@ -33,97 +32,47 @@ const defaultData: Product[] = [
     quantidade: 7.500,
     preco: 20.49,
     total_venda: 400.00,
-    perc_total_Preço: 30,
+    perc_total_preco: 30,
     total_custo: 3000.00,
     custo_kilo: 15.50,
     lucro_sobre_custo: 19,
     lucro_sobre_venda: 15,
     preco_sugerido: 39.90
   },
-  {
-    codigo: 2,
-    descricao: 'Coxao Mole Bovino KG',
-    quantidade: 7.500,
-    preco: 20.49,
-    total_venda: 400.00,
-    perc_total_Preço: 30,
-    total_custo: 3000.00,
-    custo_kilo: 15.50,
-    lucro_sobre_custo: 19,
-    lucro_sobre_venda: 15,
-    preco_sugerido: 39.90
-  },
-  {
-    codigo: 3,
-    descricao: 'Picanha Bovina KG',
-    quantidade: 7.500,
-    preco: 20.49,
-    total_venda: 400.00,
-    perc_total_Preço: 30,
-    total_custo: 3000.00,
-    custo_kilo: 15.50,
-    lucro_sobre_custo: 19,
-    lucro_sobre_venda: 15,
-    preco_sugerido: 39.90
-  },
-]
-
-const columnHelper = createColumnHelper<Product>()
-
-const columns = [
-  columnHelper.accessor('codigo', {
-    header: () => <span>Código</span>,
-    cell: info => info.getValue(),
-  }),
-  columnHelper.accessor(row => row.descricao, {
-    id: 'descricao',
-    header: () => <span>Descrição</span>,
-    cell: info => <span>{info.getValue()}</span>,
-    footer: 'Total'
-  }),
-  columnHelper.accessor('quantidade', {
-    header: () => <span>Quantidade</span>,
-    cell: info => <span>{info.renderValue()}</span>,
-  }),
-  columnHelper.accessor('preco', {
-    header: () => <span>Preço</span>,
-    footer: props => props.column.id,
-
-  }),
-  columnHelper.accessor('total_venda', {
-    header: () => <span>Total venda</span>,
-    footer: props => props.column.id,
-  }),
-  columnHelper.accessor('total_venda', {
-    header: () => <span>% Total Preço</span>,
-    footer: props => props.column.id,
-  }),
-  columnHelper.accessor('total_custo', {
-    header: () => <span>Total Custo</span>,
-    footer: props => props.column.id,
-  }),
-  columnHelper.accessor('custo_kilo', {
-    header: () => <span>Custo KG</span>,
-    footer: props => props.column.id,
-  }),
-  columnHelper.accessor('lucro_sobre_custo', {
-    header: () => <span>% Lucro Custo</span>,
-    footer: props => props.column.id,
-  }),
-  columnHelper.accessor('lucro_sobre_venda', {
-    header: () => <span>% Lucro Venda</span>,
-    footer: props => props.column.id,
-  }),
-]
+  // ... rest of the data
+];
 
 export default function CreateFracionamento() {
-  const [data, setData] = useState(() => [...defaultData])
+  const [subGroups, setSubGroups] = useState<SubGroup[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const [data, setData] = useState<Product[]>(defaultData);
+  const [fractioningData, setFractioningData] = useState<any>(null);
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
+  useEffect(() => {
+    // Fetch subgroups from API
+    fetch("http://localhost:3333/subgroup")
+      .then((response) => response.json())
+      .then((data) => setSubGroups(data))
+      .catch((error) => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    // Fetch products from API based on selected group
+    if (selectedGroup) {
+      fetch(`http://localhost:3333/product?subgroup=${selectedGroup}`)
+        .then((response) => response.json())
+        .then((data) => setData(data))
+        .catch((error) => console.error(error));
+    }
+  }, [selectedGroup]);
+
+  useEffect(() => {
+    // Fetch fractioning data from API
+    fetch("http://localhost:3333/Fractioning")
+      .then((response) => response.json())
+      .then((data) => setFractioningData(data))
+      .catch((error) => console.error(error));
+  }, []);
 
   return (
     <Box>
@@ -133,20 +82,51 @@ export default function CreateFracionamento() {
         <Sidebar />
 
         <Box flex="1" borderRadius={8} bg="gray.800" p="8">
-          <Heading size="md" fontWeight="medium">Francionamento</Heading>
+          <Heading size="md" fontWeight="medium">
+            Francionamento
+          </Heading>
           <FormControl>
             <Flex mt="2">
-              <Select placeholder='Selecione um grupo' ml="2" bg="gray.800">
-                <option value='option1'>Traseiro Bovino</option>
-                <option value='option2'>Dianteiro Bovino</option>
+              <Select
+                placeholder="Selecione um grupo"
+                ml="2"
+                bg="gray.800"
+                value={selectedGroup}
+                onChange={(e) => setSelectedGroup(e.target.value)}
+              >
+                {subGroups.map((subGroup) => (
+                  <option key={subGroup.id} value={subGroup.id}>
+                    {subGroup.description}
+                  </option>
+                ))}
               </Select>
             </Flex>
-            <HStack spacing="6" mt="4">
+            <HStack spacing="6" mt="4" className="dados_fractioning">
               <SimpleGrid minChildWidth="240px" spacing="4" w="100%">
-                <Input name="quantidade" type="text" label="Quantidade" />
-                <Input name="custo" type="text" label="Custo" />
-                <Input name="total_custo" type="text" label="Total de Custo" />
-                <Input name="margem" type="text" label="% Margem Desejada" />
+                <Input
+                  name="quantidade"
+                  type="text"
+                  label="Quantidade"
+                  value={fractioningData?.quantidade}
+                />
+                <Input
+                  name="custo"
+                  type="text"
+                  label="Custo"
+                  value={fractioningData?.custo}
+                />
+                <Input
+                  name="total_custo"
+                  type="text"
+                  label="Total de Custo"
+                  value={fractioningData?.total_custo}
+                />
+                <Input
+                  name="margem_desejada"
+                  type="text"
+                  label="% Margem Desejada"
+                  value={fractioningData?.margem_desejada}
+                />
               </SimpleGrid>
             </HStack>
           </FormControl>
@@ -154,74 +134,80 @@ export default function CreateFracionamento() {
           <Divider my="6" borderColor="gray.700" />
 
           <TableContainer>
-            <Table variant='simple' width="full" align="left">
-              <Thead bgColor="green.600" color="whitesmoke" >
-                {table.getHeaderGroups().map(headeGroup => (
-                  <tr key={headeGroup.id}>
-                    {headeGroup.headers.map(header => (
-                      <th
-                        key={header.id}
-                        colSpan={header.colSpan}
-                        align="right"
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
+            <Table variant="simple" width="full" align="left">
+              <Thead bgColor="green.600" color="whitesmoke">
+                <Tr>
+                  <Th>Descrição</Th>
+                  <Th>Quantidade</Th>
+                  <Th>Preço</Th>
+                  <Th>Total venda</Th>
+                  <Th>% Total Preço</Th>
+                  <Th>Total Custo</Th>
+                  <Th>Custo KG</Th>
+                  <Th>% Lucro Custo</Th>
+                  <Th>% Lucro Venda</Th>
+                </Tr>
               </Thead>
-              <Tbody style={{ alignItems: 'center', justifyContent: 'center' }}>
-                {table.getRowModel().rows.map(row => (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map(cell => (
-                      <td
-                        key={cell.id}
-                        align="right"
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </tr>
+              <Tbody>
+                {data.map((product) => (
+                  <Tr key={product.id}>
+                    <Td>{product.description}</Td>
+                    <Td>{product.quantidade}</Td>
+                    <Td>{product.preco}</Td>
+                    <Td>{product.total_venda}</Td>
+                    <Td>{product.perc_total_preco}</Td>
+                    <Td>{product.total_custo}</Td>
+                    <Td>{product.custo_kilo}</Td>
+                    <Td>{product.perc_lucro_custo}</Td>
+                    <Td>{product.perc_lucro_venda}</Td>
+                  </Tr>
                 ))}
               </Tbody>
-              {/* <tfoot>
-                {table.getFooterGroups().map(footerGroup => (
-                  <tr key={footerGroup.id}>
-                    {footerGroup.headers.map(header => (
-                      <th key={header.id}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                            header.column.columnDef.footer,
-                            header.getContext()
-                          )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </tfoot> */}
+              <Tfoot>
+                <Tr>
+                  <Th>Total</Th>
+                  <Th></Th>
+                  <Th></Th>
+                  <Th></Th>
+                  <Th></Th>
+                  <Th></Th>
+                  <Th></Th>
+                  <Th></Th>
+                  <Th></Th>
+                  <Th></Th>
+                </Tr>
+              </Tfoot>
             </Table>
           </TableContainer>
 
           <Flex mt="8" justify="flex-end">
             <HStack spacing="4">
-              <Button colorScheme="whiteAlpha" width="100px" leftIcon={<Icon as={RiDeleteBack2Line} />}
+            <Button
+               width="100px"
+               color="gray.600"
+               leftIcon={<Icon as={RiPencilLine} />}
+               >Editar
+              </Button>
+
+              <Button
+                colorScheme="red"
+                width="100px"
+                leftIcon={<Icon as={RiDeleteBack2Line} />}
               >
                 Cancelar
               </Button>
-              <Button colorScheme="teal" width="100px" leftIcon={<Icon as={RiSave2Line} />}
+
+              <Button
+                colorScheme="teal"
+                width="100px"
+                leftIcon={<Icon as={RiSave2Line} />}
               >
                 Salvar
               </Button>
             </HStack>
           </Flex>
         </Box>
-      </Flex >
-    </Box >
-  )
+      </Flex>
+    </Box>
+  );
 }
